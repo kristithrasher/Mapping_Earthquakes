@@ -1,4 +1,4 @@
-//  create a map with all recorded earthquakes from the past seven days.
+// add some styling to the earthquake data and vary the radius of each earthquake based on the magnitude.
 
 // Add console.log to check to see if our code is working.
 console.log("working");
@@ -38,16 +38,44 @@ L.control.layers(baseMaps).addTo(map);
 // Accessing the airport GeoJSON URL
 //let torontoHoods = "https://raw.githubusercontent.com/kristithrasher/Mapping_Earthquakes/main/torontoNeighborhoods.json";
 //let earthquakeData = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
-// Create a style for the polygons.
-let myStyle = {
-    color: '#ffffa1',
-    //fillcolor: 'yellow',
-    weight: 1
+
+
+// This function returns the style data for each of the earthquakes we plot on
+// the map. We pass the magnitude of the earthquake into a function
+// to calculate the radius.
+function styleInfo(feature) {
+    return {
+        opacity: 1,
+        fillOpacity: 1,
+        fillColor: "#ffae42",
+        color: "#000000",
+        radius: getRadius(),
+        stroke: true,
+        weight: 0.5
+    };
 }
+
+// This function determines the radius of the earthquake marker based on its magnitude.
+// Earthquakes with a magnitude of 0 will be plotted with a radius of 1.
+function getRadius(magnitude) {
+    if (magnitude === 0) {
+        return 1;
+    }
+    return magnitude * 4;
+}
+
 // Grabbing our GeoJSON data for earthquake
-// Retrieve the earthquake GeoJSON data.
-d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
-  // Creating a GeoJSON layer with the retrieved data.
-  L.geoJSON(data).addTo(map);
+d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function (data) {
+    // Creating a GeoJSON layer with the retrieved data.
+
+    // Creating a GeoJSON layer (pointToLayer function )retrieved data.adding syling for data to vary the radius based on magnitude of earthquake
+    L.geoJson(data, {
+        pointToLayer: function (feature, latlng) {
+            console.log(data);
+            return L.circleMarker(latlng);
+        },
+        // We set the style for each circleMarker using our styleInfo function.
+        style: styleInfo
+
+    }).addTo(map);
 });
-    
